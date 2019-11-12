@@ -131,17 +131,17 @@ public class TableFrame extends JFrame {
             }
 
             if (generator.visited[row][column]) {
-                setBackground(Color.green);
+                setBackground(Constants.VISITED_CELL_COLOR);
             } else {
                 setBackground(Color.white);
             }
 
             if(row == horseCoordinates[0] && column == horseCoordinates[1]) {
-                setBackground(Color.blue);
+                setBackground(Constants.HORSE_CELL_COLOR);
             }
 
             if(row == 0 || column == 0) {
-                setBackground(Color.yellow);
+                setBackground(Constants.INDEX_CELL_COLOR);
             }
 
             setHorizontalAlignment(CENTER);
