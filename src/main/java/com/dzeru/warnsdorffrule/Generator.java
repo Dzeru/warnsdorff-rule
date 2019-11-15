@@ -1,23 +1,19 @@
 package com.dzeru.warnsdorffrule;
 
 public class Generator {
-
-    public static int CELL_COUNT = 9;
-    public static String[] LETTERS = {" ", "A", "B", "C", "D", "E", "F", "G", "H"};
-
     public Object[][] cellValues = initCellValues();
     public boolean[][] visited = initVisited();
 
     public static Object[][] initCellValues() {
-        String[][] cellValues = new String[CELL_COUNT][CELL_COUNT];
+        String[][] cellValues = new String[Constants.CELL_COUNT][Constants.CELL_COUNT];
 
-        for(int i = 0; i < CELL_COUNT; i++) {
+        for(int i = 0; i < Constants.CELL_COUNT; i++) {
             cellValues[i][0] = String.valueOf(i);
-            cellValues[0][i] = LETTERS[i];
+            cellValues[0][i] = Constants.LETTERS[i];
         }
 
-        for(int i = 1; i < CELL_COUNT; i++) {
-            for(int k = 1; k < CELL_COUNT; k++) {
+        for(int i = 1; i < Constants.CELL_COUNT; i++) {
+            for(int k = 1; k < Constants.CELL_COUNT; k++) {
 
                 int[] s1 = {i + 1, k + 2};
                 int[] s2 = {i - 1, k - 2};
@@ -47,10 +43,10 @@ public class Generator {
     }
 
     public static boolean[][] initVisited() {
-        boolean[][] visited = new boolean[CELL_COUNT][CELL_COUNT];
+        boolean[][] visited = new boolean[Constants.CELL_COUNT][Constants.CELL_COUNT];
 
-        for(int i = 0; i < CELL_COUNT; i++) {
-            for(int k = 0; k < CELL_COUNT; k++) {
+        for(int i = 0; i < Constants.CELL_COUNT; i++) {
+            for(int k = 0; k < Constants.CELL_COUNT; k++) {
                 visited[i][k] = false;
             }
         }
@@ -58,8 +54,8 @@ public class Generator {
     }
 
     public Object[][] generateCellValues() {
-        for(int i = 1; i < CELL_COUNT; i++) {
-            for(int k = 1; k < CELL_COUNT; k++) {
+        for(int i = 1; i < Constants.CELL_COUNT; i++) {
+            for(int k = 1; k < Constants.CELL_COUNT; k++) {
                 int[] s1 = {i + 1, k + 2};
                 int[] s2 = {i - 1, k - 2};
                 int[] s3 = {i + 1, k - 2};
