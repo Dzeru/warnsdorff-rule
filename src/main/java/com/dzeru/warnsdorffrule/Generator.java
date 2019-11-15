@@ -89,4 +89,17 @@ public class Generator {
     private static boolean initPossible(int[] s) {
         return s[0] > 0 && s[0] < 9 && s[1] > 0 && s[1] < 9;
     }
+
+    public int[] getHorseCoordinatesByString(String statusText) {
+        int row, column = -1;
+        String columnString = String.valueOf(statusText.charAt(0));
+        String rowString = String.valueOf(statusText.charAt(1));
+        for(int i = 0; i < Constants.LETTERS.length; i++) {
+            if(Constants.LETTERS[i].equalsIgnoreCase(columnString)) {
+                column = i;
+            }
+        }
+        row = Integer.parseInt(rowString);
+        return new int[]{row, column};
+    }
 }

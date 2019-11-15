@@ -7,14 +7,17 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 
 public class TableFrame extends JFrame {
-        private DefaultTableModel tableModel;
-        private JTable table;
+    private DefaultTableModel tableModel;
+    private JTable table;
+    private JTextField startCellField;
+    private GameOverDialog gameOverDialog;
 
-        private Generator generator = new Generator();
-        private Object[] columnsHeader = Constants.LETTERS;
-        private int[] horseCoordinates = {1, 1};
-        private int[][] posCells;
-        private int[] minNextCellValueCoordinates = {0, 0};
+    private Generator generator = new Generator();
+    private Object[] columnsHeader = Constants.LETTERS;
+    private int[] horseCoordinates = {1, 1};
+    private int[][] posCells;
+    private int[] minNextCellValueCoordinates = {0, 0};
+    private int minNextCellValue = -1;
 
     public TableFrame() {
         super("Правило Варнсдорфа");
@@ -28,16 +31,38 @@ public class TableFrame extends JFrame {
 
         table = new JTable(tableModel);
         table.setDefaultRenderer(Object.class, new ChessCellRenderer());
-        getNextPossibleCoordinates();
+        table.setCellSelectionEnabled(false);
 
         JButton step = new JButton("Сделать ход");
         step.setFont(Constants.FONT);
         step.setBackground(Constants.MIN_NEXT_CELL_COLOR);
         step.addActionListener(e -> calculateStep());
 
+        JButton restart = new JButton("Рестарт");
+        restart.setFont(Constants.FONT);
+        restart.setBackground(Constants.NEXT_CELL_COLOR);
+        restart.addActionListener(e -> restart());
+
+        JButton start = new JButton("Старт");
+        start.setFont(Constants.FONT);
+        start.setBackground(Constants.VISITED_CELL_COLOR);
+        start.addActionListener(e -> start());
+
+        JLabel startCellLabel = new JLabel("Введите старт. клетку:");
+        startCellLabel.setFont(Constants.SMALL_FONT);
+        startCellLabel.setBackground(Color.white);
+
+        startCellField = new JTextField("A1");
+        startCellField.setFont(Constants.FONT);
+        startCellField.setEditable(true);
+
         JPanel buttons = new JPanel();
         buttons.setBackground(Color.white);
+        buttons.add(start);
         buttons.add(step);
+        buttons.add(restart);
+        buttons.add(startCellLabel);
+        buttons.add(startCellField);
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -63,7 +88,10 @@ public class TableFrame extends JFrame {
         getContentPane().add(buttons, constraints);
 
         JTextArea description = new JTextArea(Constants.DESCRIPTION);
-        description.setFont(Constants.FONT);
+        description.setFont(Constants.SMALL_FONT);
+        description.setBorder(BorderFactory.createEmptyBorder(Constants.INSETS_SIZE, Constants.INSETS_SIZE, Constants.INSETS_SIZE, Constants.INSETS_SIZE));
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
 
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridwidth = 4;
@@ -78,6 +106,23 @@ public class TableFrame extends JFrame {
         setVisible(true);
     }
 
+    private void start() {
+        String statusText = startCellField.getText();
+        if(statusText.length() == 2) {
+            horseCoordinates = generator.getHorseCoordinatesByString(statusText);
+        }
+        getNextPossibleCoordinates();
+    }
+
+    private void restart() {
+        generator.cellValues = Generator.initCellValues();
+        generator.visited = Generator.initVisited();
+        horseCoordinates = new int[]{1, 1};
+        minNextCellValueCoordinates = new int[]{0, 0};
+        minNextCellValue = -1;
+        getNextPossibleCoordinates();
+    }
+
     private void calculateStep() {
         try {
             clearNextPossibleCoordinates();
@@ -89,9 +134,10 @@ public class TableFrame extends JFrame {
             clearNextPossibleCoordinates();
             getNextPossibleCoordinates();
 
-            if(horseCoordinates[0] == Integer.MAX_VALUE || horseCoordinates[1] == Integer.MAX_VALUE) {
-                System.out.println("GAME OVER!!!");
-                //make button inactive;
+            if(minNextCellValue == Integer.MAX_VALUE || horseCoordinates[0] == Integer.MAX_VALUE || horseCoordinates[1] == Integer.MAX_VALUE) {
+                if(gameOverDialog == null)
+                    gameOverDialog = new GameOverDialog(this);
+                gameOverDialog.setVisible(true);
             }
 
             for(int i = 1; i < Constants.CELL_COUNT; i++) {
@@ -125,7 +171,7 @@ public class TableFrame extends JFrame {
     }
 
     private void getMinNextCellValueCoordinates() {
-        int minNextCellValue = Integer.MAX_VALUE;
+        minNextCellValue = Integer.MAX_VALUE;
 
         int[] posCellsValues = new int[posCells.length];
 
@@ -202,6 +248,27 @@ public class TableFrame extends JFrame {
 
             return super.getTableCellRendererComponent(table, value, isSelected,
                     hasFocus, row, column);
+        }
+    }
+
+    class GameOverDialog extends JDialog
+    {
+        public GameOverDialog(JFrame owner)
+        {
+            super(owner, "Game Over!", true);
+            add(new JLabel("<html><h1>Больше ходить некуда!</h1></html>"),
+                    BorderLayout.CENTER);
+
+            JButton ok = new JButton("ok");
+            ok.setBackground(Constants.MIN_NEXT_CELL_COLOR);
+            ok.setFont(Constants.FONT);
+            ok.addActionListener(event -> setVisible(false));
+
+            JPanel panel = new JPanel();
+            panel.add(ok);
+            panel.setBackground(Color.white);
+            add(panel, BorderLayout.SOUTH);
+            setSize(400, 300);
         }
     }
 }
