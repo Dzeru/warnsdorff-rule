@@ -17,8 +17,9 @@ public class TableFrame extends JFrame {
         private int[] minNextCellValueCoordinates = {0, 0};
 
     public TableFrame() {
-        super("Warnsdorff Rule");
+        super("Правило Варнсдорфа");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        getContentPane().setBackground(Color.white);
 
         tableModel = new DefaultTableModel();
         tableModel.setColumnIdentifiers(columnsHeader);
@@ -29,27 +30,49 @@ public class TableFrame extends JFrame {
         table.setDefaultRenderer(Object.class, new ChessCellRenderer());
         getNextPossibleCoordinates();
 
-        JButton step = new JButton("Step");
+        JButton step = new JButton("Сделать ход");
+        step.setFont(Constants.FONT);
+        step.setBackground(Constants.MIN_NEXT_CELL_COLOR);
         step.addActionListener(e -> calculateStep());
 
         JPanel buttons = new JPanel();
+        buttons.setBackground(Color.white);
         buttons.add(step);
 
         setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
 
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1;
+        constraints.weighty = 1;
         constraints.gridwidth = 9;
         constraints.gridheight = 9;
         constraints.gridx = 0;
         constraints.gridy = 0;
+        constraints.anchor = GridBagConstraints.NORTHWEST;
 
         getContentPane().add(table, constraints);
 
-        constraints.gridwidth = 4;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = 9;
+        constraints.gridheight = 1;
         constraints.gridx = 0;
         constraints.gridy = 10;
+        constraints.anchor = GridBagConstraints.SOUTHWEST;
 
         getContentPane().add(buttons, constraints);
+
+        JTextArea description = new JTextArea(Constants.DESCRIPTION);
+        description.setFont(Constants.FONT);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.gridwidth = 4;
+        constraints.gridheight = 10;
+        constraints.gridx = 10;
+        constraints.gridy = 0;
+        constraints.anchor = GridBagConstraints.NORTHEAST;
+
+        getContentPane().add(description, constraints);
 
         setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         setVisible(true);
@@ -135,8 +158,7 @@ public class TableFrame extends JFrame {
                                                        boolean hasFocus,
                                                        int row, int column) {
             DefaultTableModel wtm = (DefaultTableModel) table.getModel();
-            Font font = new Font("Verdana", Font.PLAIN, 24);
-            table.setFont(font);
+            table.setFont(Constants.FONT);
             table.setRowHeight(Constants.CELL_HEIGHT);
 
             TableColumn col;
@@ -154,7 +176,7 @@ public class TableFrame extends JFrame {
                     if (row > 0 && row < Constants.CELL_COUNT &&
                             column > 0 && column < Constants.CELL_COUNT &&
                             row == posCell[0] && column == posCell[1]) {
-                        setBackground(Color.red);
+                        setBackground(Constants.NEXT_CELL_COLOR);
                     }
                 }
             }
@@ -164,7 +186,7 @@ public class TableFrame extends JFrame {
             }
 
             if(row == minNextCellValueCoordinates[0] && column == minNextCellValueCoordinates[1]) {
-                setBackground(Color.blue);
+                setBackground(Constants.MIN_NEXT_CELL_COLOR);
             }
 
             if(row == horseCoordinates[0] && column == horseCoordinates[1]) {
